@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Namyang Edu-Heritage</title>
+<style>
+  :root {
+    --primary: #1d3557;
+    --secondary: #457b9d;
+    --accent: #e63946;
+    --bg: #f8f9fa;
+    --card-bg: #ffffff;
+    --text: #2b2d42;
+  }
+
+  body {
+    margin: 0;
+    font-family: 'Malgun Gothic', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    scroll-behavior: smooth;
+  }
+
+  /* 상단 내비게이션 바 고정 */
+  header {
+    background: var(--primary);
+    color: #fff;
+    padding: 15px 24px;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  }
+  header h1 { margin: 0; font-size: 1.5rem; }
+  nav a { color: #fff; text-decoration: none; margin-left: 20px; font-weight: bold; transition: 0.3s; }
+  nav a:hover { color: #a8dadc; }
+
+  /* 대문 (히어로 섹션) */
+  .hero {
+    padding: 100px 20px;
+    text-align: center;
+    background: linear-gradient(135deg, #d9e8f5 0%, #bde0fe 100%);
+    animation: fade 1.2s ease;
+  }
+  .hero h2 { font-size: 2.2rem; color: var(--primary); margin-bottom: 15px; }
+  .hero p { font-size: 1.1rem; color: #4a5568; margin-bottom: 30px; }
+
+  /* 본문 레이아웃 구조 */
+  section { padding: 60px 24px; max-width: 1200px; margin: 0 auto; }
+  section h2 { border-left: 5px solid var(--primary); padding-left: 12px; margin-bottom: 30px; color: var(--primary); }
+
+  /* 문화유산 카드 디자인 (사진 제거 및 심플 라인 추가) */
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; }
+  .card { 
+    background: var(--card-bg); 
+    border-radius: 12px; 
+    padding: 24px; 
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05); 
+    transition: transform .3s, box-shadow .3s;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border-top: 4px solid var(--primary); /* 이미지 대신 세련된 상단 포인트 바 */
+  }
+  .card:hover { transform: translateY(-8px); box-shadow: 0 12px 24px rgba(0,0,0,0.15); }
+  
+  .card h3 { margin: 10px 0 5px 0; color: var(--primary); }
+  .card .tag { display: inline-block; background: #e2e8f0; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; }
+
+  /* 버튼 공통 및 개별 스타일 */
+  button { 
+    background: var(--primary); 
+    color: #fff; 
+    border: none; 
+    padding: 12px 24px; 
+    border-radius: 8px; 
+    cursor: pointer; 
+    font-weight: bold; 
+    transition: 0.3s; 
+  }
+  button:hover { background: var(--secondary); transform: scale(1.05); }
+  .btn-ai { background: var(--secondary); margin-top: 15px; padding: 8px 12px; font-size: 0.85rem; width: 100%; }
+  .btn-link { background: #6c757d; margin-top: 5px; padding: 8px 12px; font-size: 0.85rem; width: 100%; }
+
+  /* 지도 박스 */
+  .map-container {
+    width: 100%;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+  }
+
+  /* 게이미피케이션 (미션/배지) */
+  .mission-container { display: flex; flex-wrap: wrap; gap: 24px; }
+  .mission-box, .badge-box { flex: 1; min-width: 300px; background: #fff; padding: 24px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+  
+  .mission-list { list-style: none; padding: 0; }
+  .mission-item { display: flex; align-items: center; padding: 12px 0; border-bottom: 1px solid #edf2f7; }
+  .mission-item input[type="checkbox"] { margin-right: 15px; width: 18px; height: 18px; cursor: pointer; }
+  
+  .badge-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; text-align: center; margin-top: 15px; }
+  .badge { padding: 15px 10px; background: #edf2f7; border-radius: 10px; opacity: 0.5; transition: 0.5s; font-size: 0.85rem; font-weight: bold; }
+  .badge.unlocked { background: #ffe3e3; color: var(--accent); opacity: 1; border: 2px solid var(--accent); }
+  .badge-icon { font-size: 2rem; display: block; margin-bottom: 5px; }
+
+  /* 스크롤 애니메이션 */
+  @keyframes fade { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+  .reveal { opacity: 0; transform: translateY(40px); transition: 1s ease; }
+  .reveal.show { opacity: 1; transform: none; }
+  
+  footer { text-align: center; padding: 30px; background: var(--primary); color: #fff; margin-top: 60px; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Namyang Edu-Heritage</h1>
+  <nav>
+    <a href="#">홈</a>
+    <a href="#heritage">문화유산</a>
+    <a href="#map-section">디지털 지도</a>
+    <a href="#mission">미션/배지</a>
+  </nav>
+</header>
+
+<section class="hero">
+  <h2>과거의 교육을 배우고,<br>미래의 교육을 만들다</h2>
+  <p>남양의 교육문화유산을 학생 참여형 디지털 콘텐츠로 만나보세요.</p>
+  <button onclick="location.href='#heritage'">탐방 시작하기</button>
+</section>
+
+<section id="heritage" class="reveal">
+  <h2>🏛 남양 교육문화유산</h2>
+  <div class="grid">
+    <div class="card">
+      <div>
+        <span class="tag">1397년 창건</span>
+        <h3>남양향교</h3>
+        <p>조선시대의 공립 교육기관으로, 지역의 인재 양성과 유교 성현들의 제사를 담당하던 교육의 중심지입니다.</p>
+      </div>
+      <div>
+        <button class="btn-ai" onclick="speak('남양향교는 1397년에 창건된 조선시대의 공립 교육기관입니다.')">🔊 AI 음성 해설 듣기</button>
+        <button class="btn-link" onclick="window.open('https://www.heritage.go.kr/heri/cul/culSelectDetail.do?pageNo=1_1_1_1&sngl=Y&ccbaCpno=3413100340000')">🔗 국가유산청 상세 보기</button>
+      </div>
+    </div>
+    
+    <div class="card">
+      <div>
+        <span class="tag">1854년 설립</span>
+        <h3>남양풍화당</h3>
+        <p>지방의 고령 선비들이 모여 예의와 도덕을 실천하고 학문을 논하던 기로소 문화유산으로 역사적 희소성이 높습니다.</p>
+      </div>
+      <div>
+        <button class="btn-ai" onclick="speak('남양풍화당은 1854년에 설립된 지방 기로소 문화유산입니다.')">🔊 AI 음성 해설 듣기</button>
+        <button class="btn-link" onclick="window.open('https://terms.naver.com/entry.naver?docId=6671597&cid=70213&categoryId=70257')">🔗 지식백과 상세 보기</button>
+      </div>
+    </div>
+    
+    <div class="card">
+      <div>
+        <span class="tag">대한제국기 전통가옥</span>
+        <h3>정원채 고가</h3>
+        <p>대한제국 시기에 지어진 안채와 사랑채로 구성된 전통 가옥으로, 경기 지역 고유의 주거 형태를 잘 보존하고 있습니다.</p>
+      </div>
+      <div>
+        <button class="btn-ai" onclick="speak('정원채 고가는 대한제국기 경기지역의 전통 주거문화를 보여줍니다.')">🔊 AI 음성 해설 듣기</button>
+        <button class="btn-link" onclick="window.open('https://www.heritage.go.kr/heri/cul/culSelectDetail.do?pageNo=1_1_1_1&sngl=Y&ccbaCpno=2443100060000')">🔗 국가유산청 상세 보기</button>
+      </div>
+    </div>
+    
+    <div class="card">
+      <div>
+        <span class="tag">조선시대 행정중심</span>
+        <h3>남양도호부</h3>
+        <p>조선시대 남양군 일대의 행정과 국방을 총괄하던 중심 도호부 관청 터로, 지역의 유구한 역사적 뿌리입니다.</p>
+      </div>
+      <div>
+        <button class="btn-ai" onclick="speak('남양도호부는 조선시대 남양의 행정 중심지였습니다.')">🔊 AI 음성 해설 듣기</button>
+        <button class="btn-link" onclick="window.open('https://terms.naver.com/entry.naver?docId=6672062&cid=70213&categoryId=70284')">🔗 지식백과 상세 보기</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="map-section" class="reveal">
+  <h2>🗺 남양 교육문화유산 디지털 지도</h2>
+  <p style="margin-bottom: 20px; color: #666;">실제 화성시 남양읍 일대의 지도를 보며 문화유산 탐방 동선을 계획해 보세요.</p>
+  <div class="map-container">
+    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1590.231!2d126.81648!3d37.20857!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x357b6f6f9da9b57b%3A0x7d6c6248c5a4dcd0!2sNamyang-eup%2C%20Hwaseong-si%2C%20Gyeonggi-do!5e0!3m2!1sen!2skr!4v1700000000000!5m2!1sen!2skr" 
+            width="100%" height="400" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+  </div>
+</section>
+
+<section id="mission" class="reveal">
+  <h2>🎮 오늘의 탐험 미션</h2>
+  <div class="mission-container">
+    <div class="mission-box">
+      <h3>🎯 퀘스트 수행하기</h3>
+      <ul class="mission-list">
+        <li class="mission-item"><input type="checkbox" id="m1" onclick="checkMission()"><label for="m1">문화유산 AI 해설 끝까지 듣기</label></li>
+        <li class="mission-item"><input type="checkbox" id="m2" onclick="checkMission()"><label for="m2">국가유산/백과 링크 방문하여 퀴즈 풀기</label></li>
+        <li class="mission-item"><input type="checkbox" id="m3" onclick="checkMission()"><label for="m3">현장 탐방 후기(스탬프) 등록하기</label></li>
+      </ul>
+    </div>
+    
+    <div class="badge-box">
+      <h3>🏅 획득한 배지</h3>
+      <div class="badge-grid">
+        <div class="badge" id="badge1"><span class="badge-icon">📖</span>첫걸음</div>
+        <div class="badge" id="badge2"><span class="badge-icon">🎯</span>퀴즈왕</div>
+        <div class="badge" id="badge3"><span class="badge-icon">👑</span>마스터</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>© Namyang Edu-Heritage Project</footer>
+
+<script>
+  // 스크롤 감지 인터랙션
+  const obs = new IntersectionObserver(es => es.forEach(e => {
+    if(e.isIntersecting) e.target.classList.add('show');
+  }), { threshold: 0.1 });
+  document.querySelectorAll('.reveal').forEach(x => obs.observe(x));
+
+  // AI 음성 기능 (TTS)
+  function speak(text) {
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+      const speech = new SpeechSynthesisUtterance(text);
+      speech.lang = 'ko-KR';
+      window.speechSynthesis.speak(speech);
+    } else {
+      alert("이 브라우저에서는 음성 기능을 지원하지 않습니다.");
+    }
+  }
+
+  // 실시간 미션-배지 연동 스크립트
+  function checkMission() {
+    const m1 = document.getElementById('m1').checked;
+    const m2 = document.getElementById('m2').checked;
+    const m3 = document.getElementById('m3').checked;
+
+    if(m1) document.getElementById('badge1').classList.add('unlocked');
+    else document.getElementById('badge1').classList.remove('unlocked');
+
+    if(m2) document.getElementById('badge2').classList.add('unlocked');
+    else document.getElementById('badge2').classList.remove('unlocked');
+
+    if(m1 && m2 && m3) document.getElementById('badge3').classList.add('unlocked');
+    else document.getElementById('badge3').classList.remove('unlocked');
+  }
+</script>
+</body>
+</html>
